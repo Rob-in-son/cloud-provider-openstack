@@ -1,10 +1,13 @@
 package openstack
 
 import (
+	"fmt"
 	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/gophercloud/gophercloud/openstack/loadbalancer/v2/listeners"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/security/rules"
@@ -460,16 +463,16 @@ func TestGetRulesToCreateAndDelete(t *testing.T) {
 		})
 	}
 }
-
-type testGetSecurityGroupName struct {
-    testName        string
-    serviceUID      string
-    service         *corev1.Service
-    serviceNamespace string
-    serviceName     string
-}
-
-func testGetSecurityGroupName(t *testing.T) {
-	tests := []testGetRulesToCreateAndDelete{
-		{
-			testName:      "Empty elements",
+func TestGetSecurityGroupName(t *testing.T) {
+	// Test with valid inputs
+	t.Run("valid input", func(t *testing.T) {
+		service := &corev1.Service{
+			ObjectMeta: metav1.ObjectMeta{
+				UID:       "12345",
+				Namespace: "default",
+				Name:      "test-service",
+			},
+		}
+		expected := "lb-sg-12345-default-test-service"
+		assert.Equal(t, expected, getSecurityGroupName(service))
+	})
