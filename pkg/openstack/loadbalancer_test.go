@@ -460,3 +460,16 @@ func TestGetRulesToCreateAndDelete(t *testing.T) {
 		})
 	}
 }
+
+type testGetSecurityGroupName struct {
+    testName        string
+    serviceUID      string
+    service         *corev1.Service
+    serviceNamespace string
+    serviceName     string
+}
+
+func testGetSecurityGroupName(t *testing.T) {
+	tests := []testGetRulesToCreateAndDelete{
+		{
+			testName:      "Empty elements",
