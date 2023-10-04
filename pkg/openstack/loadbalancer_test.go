@@ -476,3 +476,17 @@ func TestGetSecurityGroupName(t *testing.T) {
 		expected := "lb-sg-12345-default-test-service"
 		assert.Equal(t, expected, getSecurityGroupName(service))
 	})
+		// Test the character limit
+	t.Run("character limit", func(t *testing.T) {
+		service := &corev1.Service{
+			ObjectMeta: metav1.ObjectMeta{
+				UID:       "long-uid-1234567890123456789012345678901234567890",
+				Namespace: "long-namespace-1234567890123456789012345678901234567890",
+				Name:      "long-name-1234567890123456789012345678901234567890",
+			},
+		}
+		expected := fmt.Sprintf("lb-sg-%s-%s-%s", service.UID, service.Namespace, service.Name)
+		expected = expected[:255]
+		assert.Equal(t, expected, getSecurityGroupName(service))
+	})
+}
